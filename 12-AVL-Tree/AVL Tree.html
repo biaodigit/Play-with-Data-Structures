@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AVL(平衡树)</title>
+</head>
+<body>
+<script>
+    class Node {
+        constructor(key, value) {
+            this.key = key;
+            this.value = value;
+            this.left = null;
+            this.right = null;
+            this.height = 1;
+        }
+    }
+
+    class AVLTree {
+        constructor() {
+            this.root = null;
+            this.size = 0;
+        }
+
+        add(key, value) {
+            this.root = this._add(this.root, key, value)
+        }
+
+        _add(node, key, value) {
+            if (node === null) {
+                this.size++;
+                return new Node(key, value)
+            }
+
+            if (value < node.value) {
+                node.left = this._add(node.left, key, value)
+            } else if (value > node.value) {
+                node.right = this._add(node.right, key, value)
+            } else {
+                node.key = key;
+                node.value = value
+            }
+            node.height = 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
+
+            //计算平衡因子
+            let balanceFactor = this.getBalanceFactor(node);
+
+            //平衡维护
+            //LL
+            if (balanceFactor > 1 && this.getBalanceFactor(node.left) >= 0) {
+                return this.rightRotate(node)
+            }
+
+            //RR
+            if (balanceFactor < -1 && this.getBalanceFactor(node.right) <= 0) {
+                return this.leftRotate(node)
+            }
+
+            //LR
+            //region 图示
+            //        y                            y                           z
+            //       / \                          / \                        /   \
+            //      x   T4     向左旋转 (x)       z  T4     向右旋转（y）      x    y
+            //     / \       - - - - - - - ->   / \     - - - - - - - ->   / \  / \
+            //   T1  z                         x  T3                      T1 T2 T3 T4
+            //      / \                       / \
+            //     T2 T3                     T1 T2
+            //endregion
+            if (balanceFactor > 1 && this.getBalanceFactor(node.left) < 0) {
+                node.left = this.leftRotate(node.left);
+                return this.rightRotate(node)
+            }
+
+            //RL
+            //region 图示
+            //        y                           y                           z
+            //       / \                         / \                        /   \
+            //     T1  x     向右旋转 (x)       T1   z        向右旋转（y）   y    x
+            //        / \   - - - - - - - ->       / \   - - - - - - - -> / \  / \
+            //       z  T4                        T2  x                  T1 T2 T3 T4
+            //      / \                              / \
+            //     T2 T3                            T3 T4
+            //endregion
+            if (balanceFactor < -1 && this.getBalanceFactor(node.right) > 0) {
+                node.right = this.rightRotate(node.right);
+                return this.leftRotate(node)
+            }
+
+            return node
+        }
+
+        // 对节点y进行向右旋转操作，返回旋转后新的根节点x
+        //        y                              x
+        //       / \                           /   \
+        //      x   T4     向右旋转 (y)        z     y
+        //     / \       - - - - - - - ->    / \   / \
+        //    z   T3                       T1  T2 T3 T4
+        //   / \
+        // T1   T2
+        rightRotate(y) {
+            let x = y.left,
+                T3 = x.right;
+
+            x.right = y;
+            y.left = T3;
+
+            y.height = 1 + Math.max(this.getHeight(y.left), this.getHeight(y.right));
+            x.height = 1 + Math.max(this.getHeight(x.left), this.getHeight(x.right));
+
+            return x
+        }
+
+        // 对节点y进行向左旋转操作，返回旋转后新的根节点x
+        //    y                             x
+        //  /  \                          /   \
+        // T1   x      向左旋转 (y)       y     z
+        //     / \   - - - - - - - ->   / \   / \
+        //   T2  z                     T1 T2 T3 T4
+        //      / \
+        //     T3 T4
+        leftRotate(y) {
+            let x = y.right,
+                T2 = x.left;
+
+            x.left = y;
+            y.right = T2;
+
+            y.height = 1 + Math.max(this.getHeight(y.left), this.getHeight(y.right));
+            x.height = 1 + Math.max(this.getHeight(x.left), this.getHeight(x.right));
+
+            return x
+        }
+
+        remove(key) {
+            let node = this.getNode(this.root, key);
+            if (node) {
+                this.root = this._remove(this.root, key);
+                return node.value
+            }
+            return null
+        }
+
+        _remove(node, key) {
+            if (!node) return null;
+
+            let retNode;
+            if (key < node.key) {
+                node.left = this._remove(node.left, key)
+                retNode = node
+            } else if (key > node.key) {
+                node.right = this._remove(node.right, key)
+                retNode = node
+            } else {
+                if (node.left === null) {
+                    let rightNode = node.right;
+                    node.right = null;
+                    this.size--;
+                    retNode = rightNode
+                } else if (node.right === null) {
+                    let leftNode = node.left;
+                    node.left = null;
+                    this.size--;
+                    retNode = leftNode;
+                } else {
+                    let successor = this.minNum(node);
+                    successor.right = this._remove(node.right, successor.key);
+                    successor.left = node.left;
+                    retNode = successor
+                }
+            }
+
+            if (retNode === null) return null;
+
+            retNode.height = 1 + Math.max(this.getHeight(retNode.left), this.getHeight(retNode.right));
+
+            //计算平衡因子
+            let balanceFactor = this.getBalanceFactor(retNode);
+
+            //平衡维护
+            //LL
+            if (balanceFactor > 1 && this.getBalanceFactor(retNode.left) >= 0) {
+                return this.rightRotate(retNode)
+            }
+
+            //RR
+            if (balanceFactor < -1 && this.getBalanceFactor(retNode.right) <= 0) {
+                return this.leftRotate(retNode)
+            }
+
+            //LR
+            if (balanceFactor > 1 && this.getBalanceFactor(retNode.left) < 0) {
+                retNode.left = this.leftRotate(retNode.left);
+                return this.rightRotate(retNode)
+            }
+
+            //RL
+            if (balanceFactor < -1 && this.getBalanceFactor(retNode.right) > 0) {
+                retNode.right = this.rightRotate(retNode.right);
+                return this.leftRotate(retNode)
+            }
+
+            return retNode
+        }
+
+        isBST() {
+            let keys = [];
+            this.inOrder(this.root, keys);
+            for (let i = 1; i < keys.length; i++) {
+                if (keys[i - 1] > keys[i]) return false
+            }
+            return true
+        }
+
+        contains(key) {
+            return this.getNode(this.root, key) !== null
+        }
+
+        set(key, val) {
+            let node = this.getNode(this.root, key);
+            if (!node) {
+                throw new Error(`${key} doesn't exist!`)
+            }
+            node.value = val
+        }
+
+        //获取节点平衡因子
+        getBalanceFactor(node) {
+            if (node === null) return 0;
+
+            return this.getHeight(node.left) - this.getHeight(node.right)
+        }
+
+        getHeight(node) {
+            if (node === null) return 0;
+
+            return node.height;
+        }
+
+        getNode(node, key) {
+            if (!node) return null;
+
+            if (key === node.key) {
+                return node
+            }
+
+            if (node.key < key) {
+                return this.getNode(node.right, key)
+            } else {
+                return this.getNode(node.left, key)
+            }
+        }
+
+        getSize() {
+            return this.size
+        }
+
+        isBalanced() {
+            return this._isBalanced(this.root)
+        }
+
+        _isBalanced(node) {
+            if (!node) return true;
+
+            let balanceFactor = this.getBalanceFactor(node);
+            if (Math.abs(balanceFactor) > 1) {
+                return false
+            }
+            return this._isBalanced(node.left) && this._isBalanced(node.right)
+        }
+
+        minNum(node) {
+            if (!node) return null;
+
+            while (node) {
+                if (!node.left) {
+                    return node
+                }
+                node = node.left
+            }
+        }
+
+        inOrder(node, keys) {
+            if (!node) return null;
+
+            let pre;
+            while (node) {
+                if (!node.left) {
+                    keys.push(node.key);
+                    node = node.right
+                } else {
+                    pre = node.left;
+                    while (pre.right && pre.right !== node) {
+                        pre = pre.right
+                    }
+                    if (!pre.right) {
+                        pre.right = node;
+                        node = node.left
+                    } else {
+                        keys.push(node)
+                        node = node.right
+                    }
+                }
+            }
+        }
+    }
+
+    let avl = new AVLTree();
+    avl.add(12, 12);
+    avl.add(8, 8);
+    avl.add(18, 18);
+    avl.add(5, 5);
+    avl.add(11, 11);
+    // // avl.add(7,7);     //添加7后需进行右旋转
+    //RL
+    // avl.add(14,14);
+    // avl.add(8,8);
+    // avl.add(18,18);
+    // avl.add(5,5);
+    // avl.add(11,11);
+    // avl.add(17,17);
+    // avl.add(10,10);
+    // console.log(avl)
+</script>
+</body>
+</html>

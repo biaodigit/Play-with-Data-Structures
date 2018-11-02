@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 线段树
+    class SegmentTree {
+        constructor(arr) {
+            this.data = arr.slice(0);
+            this.tree = new Array(4 * arr.length);
+            this.lazy = [];
+            let len = this.data.length;
+            this.buildSegmentTree(0, 0, len - 1);
+        }
+
+        //在treeIndex位置创建表示区间[l, r]的线段树
+        buildSegmentTree(treeIndex, l, r) {
+            if (l === r) {
+                this.tree[treeIndex] = this.data[l];
+                return;
+            }
+            let leftChildIndex = this.leftChild(treeIndex),
+                rightChildIndex = this.rightChild(treeIndex),
+                mid = l + ((r - l) >> 1);
+            this.buildSegmentTree(leftChildIndex, l, mid);
+            this.buildSegmentTree(rightChildIndex, mid + 1, r);
+
+            this.tree[treeIndex] = this.tree[leftChildIndex] + this.tree[rightChildIndex];
+        }
+
+        get(index) {
+            if (index < 0 || index >= this.data.length) return;
+            return this.data[index];
+        }
+
+        query(queryL, queryR) {
+            if ((queryL < 0 || queryR >= this.data.length) || (queryL >= this.data.length || queryR < 0) || queryL > queryR) {
+                throw new Error("index is illegal")
+            }
+
+            return this._query(0, 0, this.data.length - 1, queryL, queryR)
+        }
+
+        _query(treeIndex, l, r, queryL, queryR) {
+            if (l === queryL && r === queryR) {
+                return this.tree[treeIndex]
+            }
+            let mid = l + ((r - l) >> 1),
+                leftChildIndex = this.leftChild(treeIndex),
+                rightChildIndex = this.rightChild(treeIndex);
+            if (queryL >= mid + 1) {
+                return this._query(rightChildIndex, mid + 1, r, queryL, queryR)
+            } else if (queryR <= mid) {
+                return this._query(leftChildIndex, l, mid, queryL, queryR)
+            }
+            let leftRes = this._query(leftChildIndex, l, mid, queryL, mid),
+                rightRes = this._query(rightChildIndex, mid + 1, r, mid + 1, queryR);
+
+            return leftRes + rightRes;
+
+        }
+
+        // todo 懒惰标记
+
+        update(index, val) {
+            if (index < 0 || index >= this.data.length) return;
+            this.data[index] = val;
+            this.set(0, 0, this.data.length - 1, index, val)
+        }
+
+        set(treeIndex, l, r, index, val) {
+            if (l === r) {
+                this.tree[treeIndex] = val;
+                return
+            }
+
+            let leftChildId = this.leftChild(treeIndex),
+                rightChildId = this.rightChild(treeIndex),
+                mid = l + ((r - l) >> 1);
+            if (index <= mid) {
+                this.set(leftChildId, l, mid, index, val)
+            } else if (index >= mid + 1) {
+                this.set(rightChildId, mid + 1, r, index, val)
+            }
+
+            this.tree[treeIndex] = this.merge(this.tree[leftChildId], this.tree[rightChildId])
+        };
+
+        getSize() {
+            return this.data.length;
+        }
+
+        leftChild(index) {
+            return 2 * index + 1
+        }
+
+        rightChild(index) {
+            return 2 * index + 2
+        }
+
+        merge(a, b) {
+            return a + b
+        }
+    }
+
+    function main(arr) {
+        let segTree = new SegmentTree(arr);
+        console.log(segTree.tree)
+        console.log(segTree.query(2, 5))
+        segTree.update(2, 10)
+        console.log(segTree.query(2,5))
+    }
+
+    main([-2, 0, 3, -5, 2, -1])
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    const RED = true;
+    const BLACK = false;
+
+    class Node {
+        constructor(key, value) {
+            this.key = key;
+            this.value = value;
+            this.left = null;
+            this.right = null;
+            this.color = RED;
+        }
+    }
+
+    class RedBlackTree {
+        constructor() {
+            this.root = null;
+            this.size = 0;
+        }
+
+        add(key, value) {
+            this.root = this._add(this.root, key, value);
+            this.root.color = BLACK
+        }
+
+        _add(node, key, value) {
+            if (!node) {
+                this.size++;
+                return new Node(key, value);
+            }
+
+            if (key < node.key) {
+                node.left = this._add(node.left, key, value)
+            } else if (key > node.key) {
+                node.right = this._add(node.right, key, value)
+            } else {
+                node.value = value
+            }
+
+            if (this.isRed(node.right) && !this.isRed(node.left)) {
+                node = this.leftRotate(node)
+            }
+
+            if (this.isRed(node.left) && this.isRed(node.left.left)) {
+                node = this.rightRotate(node)
+            }
+
+            if (this.isRed(node.left) && this.isRed(node.right)) {
+                this.flipColors(node)
+            }
+
+            return node
+        }
+
+        //   node                     x
+        //  /   \     左旋转         /  \
+        // T1   x   --------->   node   T3
+        //     / \              /   \
+        //    T2 T3            T1   T2
+        leftRotate(x) {
+            // let x = node.right;
+            //
+            // node.right = x.left;
+            // x.left = node;
+            //
+            // x.color = node.color;
+            // node.color = RED;
+            let y = x.right;
+            x.right = y.left;
+
+            if(!this.isRed(y.left))
+
+            return x
+        }
+
+        //     node                   x
+        //    /   \     右旋转       /  \
+        //   x    T2   ------->   y   node
+        //  / \                       /  \
+        // y  T1                     T1  T2
+        rightRotate(node) {
+            let x = node.left;
+
+
+            node.left = x.right;
+            x.right = node;
+
+            x.color = node.color;
+            node.color = RED;
+
+            return x
+        }
+
+        flipColors(node) {
+            node.color = RED;
+            node.left.color = BLACK;
+            node.right.color = BLACK
+        }
+
+        getSize() {
+            return this.size
+        }
+
+        isEmpty() {
+            return this.size === 0
+        }
+
+        isRed(node) {
+            if (!node) return BLACK;
+
+            return node.color
+        }
+    }
+
+    function main() {
+        let n = 10000000,
+            nums = [];
+        for (let i = 0; i < n; i++) {
+            nums.push(i)
+        }
+        let start = new Date().getTime(),
+            RBTree = new RedBlackTree();
+
+        for(num of nums){
+            RBTree.add(num, null)
+        }
+
+        let end = new Date().getTime(),
+            time = (end - start) / 1000;
+
+        console.log(time)
+    }
+
+    main()
+    // let RBTree = new RedBlackTree();
+    // RBTree.add(26, 26)
+    // RBTree.add(17, 17)
+    // RBTree.add(41, 41)
+    // RBTree.add(30, 30)
+    // RBTree.add(47, 47)
+    // console.log(RBTree)
+</script>
+</body>
+</html>

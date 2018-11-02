@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trie</title>
+</head>
+<body>
+<script>
+    class TrieNode {
+        constructor() {
+            this.next = new Map();
+            this.isWord = false;
+        }
+    }
+
+    class Trie {
+        constructor() {
+            this.root = new TrieNode(null);
+            this.size = 0;
+        }
+
+        add(word) {
+            let cur = this.root,
+                c;
+            for (let i = 0; i < word.length; i++) {
+                c = word.charAt(i);
+                if (!cur.next.get(c)) {
+                    cur.next.set(c, new TrieNode(c))
+                }
+                cur = cur.next.get(c);
+            }
+            if (!cur.isWord) {
+                cur.isWord = true;
+                this.size++
+            }
+        }
+
+        search(word) {
+            let cur = this.root;
+            return this.match(cur, word, 0)
+        }
+
+        match(node, word, index) {
+            if (index === word.length) return node.isWord;
+
+            let c = word.charAt(index);
+            if (c === '.') {
+                for (let key of node.next.keys()) {
+                    if (this.match(node.next.get(key), word, index + 1)) return true
+                }
+                return false
+            } else {
+                if (!node.next.has(c)) return false;
+                return this.match(node.next.get(c), word, index + 1)
+            }
+        }
+
+        isPrefix(prefix) {
+            let cur = this.root,
+                c;
+            for (let i = 0; i < prefix.length; i++) {
+                c = prefix.charAt(i);
+                if (!cur.next.has(c)) {
+                    return false
+                }
+                cur = cur.next.get(c);
+            }
+            return true
+        }
+
+        remove(word) {
+            if (!word.length) return false;
+            //region 非递归
+            let cur = this.root,
+                stack = [],
+                c;
+
+            stack.push(cur);
+            for (let i = 0; i < word.length; i++) {
+                c = word.charAt(i);
+                cur = cur.next.get(c);
+                stack.push(cur)
+            }
+
+            if (!stack[stack.length - 1].isWord) return false;
+
+            stack[stack.length - 1].isWord = false;
+            this.size--;
+
+            if (this.hasKey(stack[stack.length - 1])) {
+                return true
+            } else {
+                stack.pop()
+            }
+
+            for (let i = word.length - 1; i >= 0; i--) {
+                c = word.charAt(i);
+                stack[stack.length - 1].next.delete(c);
+                if (stack[stack.length - 1].isWord || this.hasKey(stack[stack.length - 1])) return true;
+                stack.pop()
+            }
+            //endregion
+
+            //region 递归
+            // return this.removeMatch(cur, word, 0)
+            //endregion
+        }
+
+        removeMatch(node, word, index) {
+            //region code1
+            // if(this.search(word)) {
+            //     if (index === word.length) return false;
+            //
+            //     let c = word.charAt(index);
+            //     if (!node.next.has(c)) return;
+            //
+            //     let cur = node.next.get(c),
+            //         del;
+            //     del = this.removeMatch(cur, word, index + 1);
+            //     if (this.isEnd(cur) && index === word.length - 1) {
+            //         node.next.delete(c);
+            //         return false
+            //     } else if (cur.isWord && !del && index === word.length - 1) {
+            //         cur.isWord = false;
+            //         return true
+            //     } else if (!del && !cur.isWord && !this.hasKey(cur)) {
+            //         node.next.delete(c);
+            //     }
+            //     return true
+            // }else{
+            //     console.log('word is undefined')
+            // }
+            //endregion
+
+            //region code2
+            // if (index === word.length) {
+            //     node.isWord = false;
+            //     this.size--;
+            //     return true
+            // }
+            //
+            // let c = word.charAt(index),
+            //     cur = node.next.get(c),
+            //     ret;
+            // ret = this.removeMatch(cur, word,index+1);
+            // if(!cur.isWord && this.isEnd(cur)){
+            //     node.next.delete(c)
+            // }
+            // return ret
+            //endregionk
+
+            //region code3
+            if (index === word.length) return;
+
+            let c = word.charAt(index),
+                cur = node.next.get(c);
+
+            this.removeMatch(cur, word, index + 1);
+
+            if (index === word.length - 1) {
+                cur.isWord = false;
+                this.size--;
+            }
+
+            if (!cur.isWord && this.isEnd(cur)) {
+                node.next.delete(c)
+            }
+
+            return true
+            //endregion
+
+        }
+
+        isEnd(node) {
+            return node.next.size === 0
+        }
+
+        hasKey(node) {
+            return node.next.size >= 1
+        }
+
+        getSize() {
+            return this.size;
+        }
+    }
+
+    let trie = new Trie();
+    trie.add('apple')
+    trie.add('panda')
+    trie.add('pandc')
+    trie.add('pan')
+    trie.add('pad')
+    trie.add('pa')
+    trie.add('dog')
+    // console.log(trie.isPrefix('pa'))
+    // console.log(trie.search('p...a'))
+    // trie.remove('apple')
+    // trie.remove('pan')
+    console.log(trie.remove('panda'))
+    // console.log(trie.remove('pandc'))
+    // console.log(trie.remove('pan'))
+    // console.log(trie.remove('pa'))
+    console.log(trie.root.next)
+</script>
+</body>
+</html>

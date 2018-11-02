@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 最大堆
+    class maxHeap {
+        constructor(arr) {
+            this.data = arr.slice(0);
+            for (let i = this.parent(arr.length - 1); i >= 0; i--) {
+                this.shiftDown(i)
+            }
+
+            console.log(this.data)
+        }
+
+        add(el) {
+            if (!el) return
+            this.data.push(el);
+            this.shiftUp(this.data.length - 1)
+        }
+
+        parent(num) {
+            return (num - 1) >> 1
+        }
+
+        leftChild(index) {
+            return index * 2 + 1
+        }
+
+        rightChild(index) {
+            return index * 2 + 2
+        }
+
+        shiftUp(k) {
+            while (k > 0 && this.data[k] > this.data[this.parent(k)]) {
+                swap(this.data, count, this.parent(k));
+                [this.data[k], this.data[this.parent(k)]] = [this.data[this.parent(k)], this.data[k]];
+                k = this.parentK(k);
+            }
+        }
+
+        shiftDown(k) {
+            while (this.leftChild(k) < this.data.length) {
+                let j = this.leftChild(k);
+                if (j + 1 < this.data.length && this.data[j + 1] > this.data[j]) {
+                    j += 1;
+                }
+                if (this.data[k] >= this.data[j]) return;
+
+                [this.data[k], this.data[j]] = [this.data[j], this.data[k]];
+
+                k = j;
+            }
+        }
+
+        findMax() {
+            if (!this.data.length) {
+                throw new TypeError("the data is null")
+            }
+            return this.data[this.head];
+        }
+
+        extraMax() {
+            let res = this.findMax();
+            [this.data[this.head], this.data[this.data.length - 1]] = [this.data[this.data.length - 1], this.data[this.head]];
+            this.data.pop();
+            this.shiftDown(this.head);
+            return res
+        }
+
+        replace(e) {
+            this.data[this.head] = e;
+            this.shiftDown(this.head);
+        }
+    }
+
+
+    new maxHeap([3, 1, 5, 7, 2, 4, 9, 6, 10, 8]);
+    // maxHeap.add(8.5)
+    // maxHeap.shiftDown(1);
+    // maxHeap.heapSort([9,8,7,6,5,4,3,2,1,0])
+
+</script>
+</body>
+</html>

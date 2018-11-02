@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    //  二叉搜索树
+    let Node = function (value) {
+        this.value = value;
+        this.right = null;
+        this.left = null;
+        this.isFirst = false;
+    };
+
+    class BST {
+        constructor(value) {
+            let node = new Node(value);
+            this.root = node;
+            this.count = 0;
+        }
+
+        size() {
+            return this.count
+        }
+
+        isEmpty() {
+            return this.count === 0
+        }
+
+        insert(value) {
+            if (this.root === null) {
+                this.root = new Node(value);
+                this.count = 1;
+            } else {
+                this.root = this._insert(this.root, value);
+                this.count++
+            }
+        }
+
+        _insert(node, value) {
+            if (node === null) {
+                return new Node(value)
+            }
+            if (node.value === value) {
+                return;
+            } else if (value < node.value) {
+                node.left = this._insert(node.left, value)
+            } else {
+                node.right = this._insert(node.right, value)
+            }
+            return node;
+        }
+
+        contain(value) {
+            return this._contain(this.root, value)
+        }
+
+        _contain(node, value) {
+            if (node === null) return false
+            if (node.value === value) {
+                return true
+            } else if (node.left && node.value > value) {
+                return this._contain(node.left, value)
+            } else if (node.right && node.value < value) {
+                return this._contain(node.right, value)
+            }
+        }
+
+        search(value) {
+            return this._search(this.root, value)
+        }
+
+        _search(node, value) {
+            if (node === null) return null
+
+            if (node.value === value) {
+                return node.value
+            } else if (node.left && node.value > value) {
+                return this._search(node.left, value)
+            } else if (node.right && node.value < value) {
+                return this._search(node.right, value)
+            }
+            return null
+        }
+
+        preOrder(node) {
+            if (node !== null) {
+                console.log(node.value)
+                this.preOrder(node.left)
+                this.preOrder(node.right)
+            }
+        }
+
+        inOrder(node) {
+            if (node !== null) {
+                this.inOrder(node.left);
+                console.log(node.value);
+                this.inOrder(node.right)
+            }
+        }
+
+        postOrder(node) {
+            if (node !== null) {
+                this.postOrder(node.left)
+                this.postOrder(node.right)
+                console.log(node.value)
+            }
+        }
+
+        miniNum(node) {
+            if (!this.root) return;
+            while (node) {
+                if (!node.left) {
+                    return node
+                }
+                node = node.left
+            }
+        }
+
+        removeMin(node) {
+            let pNode = node,
+                minNode = node.left,
+                rightNode = null;
+            while (minNode && minNode.left) {
+                pNode = pNode.left
+                minNode = minNode.left
+            }
+            if (minNode.right) {
+                rightNode = minNode.right
+            }
+            pNode.left = rightNode
+            return node;
+        }
+
+        maxNum(node) {
+            if (!this.root) return;
+            while (node) {
+                if (!node.right) {
+                    return node;
+                }
+                node = node.right
+            }
+        }
+
+        removeMax(node) {
+            let pNode = node,
+                maxNode = node.right,
+                leftNode = null;
+            while (maxNode && maxNode.right) {
+                pNode = pNode.right
+                maxNode = maxNode.right
+            }
+            if (maxNode.left) {
+                leftNode = maxNode.left
+            }
+            pNode.right = leftNode
+            return node;
+        }
+
+        remove(node, e) {
+            this.root = this._remove(node, e);
+            this.count--;
+        }
+
+        _remove(node, e) {
+            if (!node) return null;
+
+            if (node.value > e.value) {
+                node.left = this._remove(node.left, e);
+            } else if (node.value < e.value) {
+                node.right = this._remove(node.right, e);
+            } else {
+                if (node.left === null) {
+                    let rightNode = node.right;
+                    node.right = null;
+                    return rightNode;
+                } else if (node.right === null) {
+                    let leftNode = node.left;
+                    node.left = null;
+                    return leftNode;
+                }
+                let successor = this.miniNum(node.right);
+                successor.right = this.removeMin(node.right);
+                successor.left = node.left;
+                node.left = node.right = null;
+                return successor;
+            }
+        }
+
+
+        levelOrder() {
+            let queue = [];
+            queue.push(this.root);
+            while (queue.length) {
+                let node = queue.shift();
+                console.log(node.value);
+                if (node.left) queue.push(node.left);
+                if (node.right) queue.push(node.right);
+            }
+        }
+    }
+
+
+</script>
+</body>
+</html>
