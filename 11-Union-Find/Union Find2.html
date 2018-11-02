@@ -6,19 +6,21 @@
 </head>
 <body>
 <script>
-    // 并查集
     class UnionFind {
         constructor(n) {
-            this.id = new Array(n);
+            this.parent = new Array(n);
             for (let i = 0; i < n; i++) {
-                this.id[i] = i;
+                this.parent[i] = i;
             }
         }
 
         find(p) {
             if (p < 0 || p >= this.id.length) return;
 
-            return this.id[p];
+            while (p !== this.parent[p]) {
+                p = this.parent[p]
+            }
+            return p
         }
 
         isConnected(p, q) {
@@ -26,15 +28,11 @@
         }
 
         unionElements(p, q) {
-            let pId = this.find(p),
-                qId = this.find(q);
-            if (pId === qId) return;
+            let pRoot = this.find(p),
+                qRoot = this.find(q);
+            if (pRoot === qRoot) return;
 
-            for (let i = 0; i < this.id.length; i++) {
-                if (this.id[i] === pId) {
-                    this.id[i] = qId
-                }
-            }
+            this.parent[pRoot] = qRoot
         }
     }
 </script>

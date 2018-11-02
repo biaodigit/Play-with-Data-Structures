@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 并查集
+    class UnionFind {
+        constructor(n) {
+            this.parent = new Array(n);
+            this.rank = new Array(n);
+            for (let i = 0; i < n; i++) {
+                this.parent[i] = i;
+                this.rank[i] = 1;
+            }
+        }
+
+        find(p) {
+            if (p < 0 || p >= this.parent.length) return;
+
+            while (p !== this.parent[p]) {
+                p = this.parent[p];
+            }
+
+            return p;
+        }
+
+        isConnected(p, q) {
+            return this.find(p) === this.find(q)
+        }
+
+        unionElements(p, q) {
+            let pRoot = this.find(p),
+                qRoot = this.find(q);
+            if (pRoot === qRoot) return;
+            if (this.rank[pRoot] < this.rank[qRoot]) {
+                this.parent[pRoot] = qRoot;
+            } else if (this.rank[qRoot] < this.rank[pRoot]) {
+                this.parent[qRoot] = pRoot;
+            } else {
+                this.parent[pRoot] = qRoot;
+                this.rank[qRoot]++;
+            }
+        }
+    }
+</script>
+</body>
+</html>
