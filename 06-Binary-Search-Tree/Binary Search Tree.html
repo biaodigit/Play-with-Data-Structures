@@ -93,6 +93,44 @@
             }
         }
 
+        preOrderNR(node) {
+            if (!node) return;
+            let stack = [],
+                root;
+            stack.push(node);
+            while (stack.length) {
+                root = stack.pop();
+                if (root.right) stack.push(root.right);
+                if (root.left) stack.push(root.left);
+                console.log(root.value)
+            }
+        }
+
+        preOrderMorris(node) {
+            if (!node) return null;
+
+            let pre;
+            while (node) {
+                if (!node.left) {
+                    console.log(node.value);
+                    node = node.right;
+                } else {
+                    pre = node.left;
+                    while (pre.right && pre.right !== node) {
+                        pre = pre.right;
+                    }
+                    if (!pre.right) {
+                        console.log(node.value);
+                        pre.right = node;
+                        node = node.left
+                    } else {
+                        node = node.right;
+                        pre.right = null;
+                    }
+                }
+            }
+        }
+
         inOrder(node) {
             if (node !== null) {
                 this.inOrder(node.left);
@@ -101,11 +139,129 @@
             }
         }
 
+        inOrderNR(node) {
+            if (!node) return
+            let stack = [],
+                root;
+            while (true) {
+                while (node) {
+                    stack.push(node);
+                    node = node.left
+                }
+
+                if (!stack.length) break;
+                root = stack.pop();
+                console.log(root.value);
+                root = root.right;
+            }
+        }
+
+        inOrderMorris(node) {
+            if (!node) return null;
+
+            let pre;
+            while (node) {
+                if (!node.left) {
+                    console.log(node.value)
+                    node = node.right
+                } else {
+                    pre = node.left
+                    while (pre.right && pre.right !== node) {
+                        pre = pre.right
+                    }
+                    if (!pre.right) {
+                        pre.right = node
+                        node = node.left
+                    } else {
+                        console.log(node.value)
+                        node = node.right
+                    }
+                }
+
+            }
+        }
+
         postOrder(node) {
             if (node !== null) {
                 this.postOrder(node.left)
                 this.postOrder(node.right)
                 console.log(node.value)
+            }
+        }
+
+        postOrderNR(node) {
+            if (!node) return;
+            let stack = [],
+                currNode = node,
+                rightNode = null;
+            stack.push(currNode)
+            while (stack.length) {
+                while (currNode.left) {
+                    stack.push(currNode.left)
+                    currNode = currNode.left;
+                }
+                currNode = stack.pop()
+                while (!currNode.right || currNode.right === rightNode) {
+                    console.log(currNode.value)
+                    rightNode = currNode
+                    currNode = stack.pop()
+                }
+                stack.push(currNode)
+                currNode = currNode.right
+
+            }
+        }
+
+        reverse(p1, p2) {
+            if (p1 === p2) return;
+
+            let x = p1,
+                y = p1.right,
+                temp;
+            while (true) {
+                temp = y.right;
+                y.right = x;
+                x = y;
+                y = temp;
+                if (x === p2) break;
+            }
+        }
+
+        printReverse(p1, p2) {
+            this.reverse(p1, p2);
+
+            let pNode = p2;
+            while (true) {
+                console.log(pNode.value);
+                if (pNode === p1) break;
+                pNode = pNode.right;
+            }
+
+            this.reverse(p2, p1);
+        }
+
+        postOrderMorris(node) {
+            if (!node) return;
+            let root = new Node(null),
+                pre;
+            root.left = node;
+            while (root) {
+                if (!root.left) {
+                    root = root.right;
+                } else {
+                    pre = root.left;
+                    while (pre.right && pre.right !== root) {
+                        pre = pre.right;
+                    }
+                    if (!pre.right) {
+                        pre.right = root;
+                        root = root.left;
+                    } else {
+                        this.printReverse(root.left, pre);
+                        pre.right = null;
+                        root = root.right
+                    }
+                }
             }
         }
 
