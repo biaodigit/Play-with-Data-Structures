@@ -27,7 +27,7 @@
 
 [第十三章 红黑树](https://github.com/biaodigit/Play-with-Data-Structures/tree/master/13-Red-Black-Tree)
 
-第十四章(待更新)
+[第十四章 哈希表](https://github.com/biaodigit/Play-with-Data-Structures/tree/master/14-Hash-Table)
 
 > 由于只是根据对课程的源码的理解用js编写，而本人对js方面修行尚浅，如有js问题可请教[摘星大佬](https://github.com/kingAnyWHere)
 
