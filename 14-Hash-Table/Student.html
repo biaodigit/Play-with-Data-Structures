@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    class Student {
+        constructor(grade, cls, firstName, lastName) {
+            this.grade = grade;
+            this.cls = cls;
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        hashCode() {
+            let B = 31,
+                hash = 0;
+            hash = hash * B + this.grade;
+            hash = hash * B + this.cls;
+            hash = hash * B + hashCode(this.firstName.toLowerCase());
+            hash = hash * B + hashCode(this.lastName.toLowerCase());
+
+            return hash
+        }
+    }
+
+    //网上copy的js仿java hashCode，参数只支持字符串
+    function hashCode(str) {
+        let h = 0, off = 0;
+        let len = str.length;
+        for (let i = 0; i < len; i++) {
+            h = 31 * h + str.charCodeAt(off++);
+        }
+        let t = -2147483648 * 2;
+        while (h > 2147483647) {
+            h += t
+        }
+        return h
+    }
+
+    let student = new Student(3, 2, "bobo", "Liu")
+    console.log(student.hashCode())
+</script>
+</body>
+</html>
