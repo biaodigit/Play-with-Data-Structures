@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    class HashTable {
+        constructor(M) {
+            this.hashTable = Array(M);
+            this.M = M;
+            this.size = 0;
+            for (let i = 0; i < M; i++) {
+                this.hashTable[i] = new Map()
+            }
+        }
+
+        add(key, value) {
+            let map = this.hashTable[this.hash(key)];
+            if (map.has(key)) {
+                map.set(key, value)
+            } else {
+                map.set(key, value);
+                this.size++;
+            }
+        }
+
+        remove(key) {
+            let map = this.hashTable[this.hash(key)],
+                ret = null;
+            if (map.has(key)) {
+                ret = map.delete(key);
+                this.size--
+            }
+            return ret
+        }
+
+        set(key, value) {
+            let map = this.hashTable[this.hash(key)];
+            if(!map.has(key)){
+                throw new Error(`${key} doesn't exist!`)
+            }
+            map.set(key, value)
+        }
+
+        hash(key) {
+            let str = null;
+            switch (this._type(key)) {
+                case 'string':
+                    str = key;
+                    break;
+                case 'null':
+                case 'undefined':
+                case 'number':
+                case 'boolean':
+                    str = key + ''
+            }
+
+            return (this._hashCode(str) & 0x7fffffff) % this.M
+        }
+        
+        contains(key) {
+            return this.hashTable[this.hash(key)].has(key)
+        }
+
+        get(key){
+            return this.hashTable[this.hash(key)].get(key)
+        }
+
+        _type(key) {
+            let str = Object.prototype.toString.call(key),
+                type = str.slice(8, -1).toLowerCase();
+
+            return type
+        }
+
+        //辅助函数
+        _hashCode(str) {
+            let h = 0, off = 0;
+            let len = str.length;
+            for (let i = 0; i < len; i++) {
+                h = 31 * h + str.charCodeAt(off++);
+            }
+            let t = -2147483648 * 2;
+            while (h > 2147483647) {
+                h += t
+            }
+            return h
+        }
+    }
+</script>
+</body>
+</html>
