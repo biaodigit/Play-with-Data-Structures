@@ -6,6 +6,10 @@
 </head>
 <body>
 <script>
+    const upperTol = 10;
+    const lowerTol = 2;
+    const initCapacity = 7;
+
     class HashTable {
         constructor(M) {
             this.hashTable = Array(M);
@@ -24,21 +28,30 @@
                 map.set(key, value);
                 this.size++;
             }
+
+            if (this.size >= upperTol * this.M) {
+                this.resize(this.M * lowerTol)
+            }
         }
 
         remove(key) {
             let map = this.hashTable[this.hash(key)],
                 ret = null;
+
             if (map.has(key)) {
                 ret = map.delete(key);
                 this.size--
+            }
+
+            if (this.size < upperTol * this.M && this.M / 2 >= initCapacity) {
+                this.resize(this.M / 2)
             }
             return ret
         }
 
         set(key, value) {
             let map = this.hashTable[this.hash(key)];
-            if(!map.has(key)){
+            if (!map.has(key)) {
                 throw new Error(`${key} doesn't exist!`)
             }
             map.set(key, value)
@@ -59,12 +72,12 @@
 
             return (this._hashCode(str) & 0x7fffffff) % this.M
         }
-        
+
         contains(key) {
             return this.hashTable[this.hash(key)].has(key)
         }
 
-        get(key){
+        get(key) {
             return this.hashTable[this.hash(key)].get(key)
         }
 
@@ -73,6 +86,24 @@
                 type = str.slice(8, -1).toLowerCase();
 
             return type
+        }
+
+        resize(newM) {
+            let newHashTable = Array(newM);
+            for (let i = 0; i < newM; i++) {
+                newHashTable[i] = new Map()
+            }
+
+            let oldM = this.M;
+            this.M = newM;
+            for (let i = 0; i < oldM; i++) {
+                let map = this.hashTable[i];
+                for (let key of map.keys()) {
+                    newHashTable[this.hash[key]].set(key, map.get(key))
+                }
+            }
+
+            this.hashTable = newHashTable
         }
 
         //辅助函数
