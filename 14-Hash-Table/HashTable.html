@@ -6,14 +6,17 @@
 </head>
 <body>
 <script>
+    const capacity = [53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593,
+        49157, 98317, 196613, 393241, 786433, 1572869, 3145739, 6291469,
+        12582917, 25165843, 50331653, 100663319, 201326611, 402653189, 805306457, 1610612741];
     const upperTol = 10;
     const lowerTol = 2;
-    const initCapacity = 7;
+    let capacityIndex = 0;
 
     class HashTable {
-        constructor(M) {
+        constructor() {
             this.hashTable = Array(M);
-            this.M = M;
+            this.M = capacity[capacityIndex];
             this.size = 0;
             for (let i = 0; i < M; i++) {
                 this.hashTable[i] = new Map()
@@ -29,8 +32,9 @@
                 this.size++;
             }
 
-            if (this.size >= upperTol * this.M) {
-                this.resize(this.M * lowerTol)
+            if (this.size >= upperTol * this.M && capacityIndex + 1 < capacity.length) {
+                capacityIndex++;
+                this.resize(capacity[capacityIndex])
             }
         }
 
@@ -43,8 +47,9 @@
                 this.size--
             }
 
-            if (this.size < upperTol * this.M && this.M / 2 >= initCapacity) {
-                this.resize(this.M / 2)
+            if (this.size < lowerTol * this.M && capacityIndex - 1 >= 0) {
+                capacityIndex--;
+                this.resize(capacity[capacityIndex])
             }
             return ret
         }
