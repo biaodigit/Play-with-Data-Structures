@@ -13,7 +13,7 @@
 
 [第六章 二分搜索树](https://github.com/biaodigit/Play-with-Data-Structures/tree/master/06-Binary-Search-Tree)
 
-[第七章 集合和映射](https://github.com/biaodigit/Play-with-Data-Structures/tree/master/07-Set-and-Map)(这章只有一条leetcode题源码，因为本章内容基本是基于第四章和第六章做简单的二次封装，而由于浏览器不支持import和export，需要用babel解析，略麻烦，故不重复贴源码)
+[第七章 集合和映射](https://github.com/biaodigit/Play-with-Data-Structures/tree/master/07-Set-and-Map)(这章只有一条leetcode题源码，因为本章内容基本是基于第四章和第六章做简单的二次封装，略麻烦，故不重复贴源码)
 
 [第八章 堆和优先队列](https://github.com/biaodigit/Play-with-Data-Structures/tree/master/08-Heap-and-Priority-Queue)(这章的优先队列没有源码，原因同上)
 
