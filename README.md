@@ -1,6 +1,6 @@
 # Play-with-Data-Structures
 
-> 此仓源码大部分根据bobo老师课程进行编写，少量源码作者自作多情进行修改，如有不适，以bobo老师源码仓库为准
+> 此仓源码大部分根据bobo老师课程进行编写，少量源码作者自作多情进行修改，如有不适，以[bobo老师源码仓库](https://github.com/liuyubobobo/Play-with-Data-Structures)为准
 
 
 第二章 不要小瞧数组(这章没有源码参考，因为JS本身已经实现此章大部分内容或JS本身不支持课程内的语法)
