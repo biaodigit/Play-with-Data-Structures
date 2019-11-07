@@ -33,3 +33,4 @@
 
 > 最后打个广告，个人的[数据结构算法仓库](https://github.com/biaodigit/JavaScriptAlgorithms)(此仓总结了《玩转数据结构》和《算法和数据结构》两门课的源码，以及一些经典算法问题(内含bobo老师布置的课外作业)，以及一些排序上的拓展))
 
+> 最近开始写[LeetCode算法题解](https://biaodigit.github.io/LeetCode/)，坚持每周更新，欢迎大家提建议👏，如果觉得还不错的希望您小抬右手到[仓库](https://github.com/biaodigit/LeetCode)右上角点一个star , 您的支持是作者长期更新维护的动力^_^
