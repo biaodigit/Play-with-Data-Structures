@@ -45,7 +45,7 @@
 
         get(index) {
             if (index < 0 || index > this.size) {
-                throw new Error("Add failed. Illegal index")
+                throw new Error("Get failed. Illegal index")
             }
 
             let cur = this.dummyHead.next;
@@ -66,7 +66,7 @@
 
         set(index, e) {
             if (index < 0 || index > this.size) {
-                throw new Error("Add failed. Illegal index")
+                throw new Error("Set failed. Illegal index")
             }
 
             let cur = this.dummyHead.next;
@@ -89,7 +89,7 @@
 
         remove(index) {
             if (index < 0 || index > this.size) {
-                throw new Error("Add failed. Illegal index")
+                throw new Error("Remove failed. Illegal index")
             }
 
             let prev = this.dummyHead;
@@ -130,7 +130,7 @@
             let ret = '',
                 cur = this.dummyHead.next;
             while (cur) {
-                ret += `${cur}->`;
+                ret += `${cur.e}->`;
                 cur = cur.next
             }
             ret += 'null';
